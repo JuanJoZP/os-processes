@@ -67,7 +67,8 @@ public class OS {
                     cpu.addProcess(p);
                     System.out.println("Process "+p.getPid()+" was loaded!");
                 }
-                
+                rq.s.addGanttContextSwitch();
+                rq.s.addContextSwitch();
             break;
             
             
@@ -75,6 +76,8 @@ public class OS {
                 //When the scheduler defined which process will go to CPU
                 cpu.addProcess(p);
                 System.out.println("Process "+p.getPid()+" was loaded!");
+                rq.s.addGanttContextSwitch();
+                rq.s.addContextSwitch();
             break;
             
             

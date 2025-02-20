@@ -16,6 +16,7 @@ public abstract class Scheduler {
     OS os;
     protected LinkedList<Process> processes;
     private int totalContextSwitches;
+    private int totalGanttContextSwitches;
     
     
     public Scheduler(OS os){
@@ -38,6 +39,14 @@ public abstract class Scheduler {
     
     public int getTotalContextSwitches(){
         return this.totalContextSwitches;
+    }
+    
+    public void addGanttContextSwitch(){
+        this.totalGanttContextSwitches++;
+    }
+    
+    public int getTotalGanttContextSwitches(){
+        return this.totalGanttContextSwitches;
     }
     
     public boolean isEmpty(){

@@ -38,7 +38,8 @@ public class SystemOS implements Runnable{
         processes = new ArrayList();
         //initSimulationQueue();
         //initSimulationQueueSimple();
-        initSimulationQueueSimpler2();
+        initSimulationQueueSimpler();
+        //initSimulationQueueSimpler2();
         showProcesses();
     }
     
@@ -292,50 +293,65 @@ public class SystemOS implements Runnable{
     
     
     public double calcCPUUtilization(){
-       
-        
-        return 0;
+        int cpu_empty_cycles = 0;
+        for (int execution_code:execution) {
+            if (execution_code == -1) {
+                cpu_empty_cycles++;
+            }
+        }
+
+        return (double)clock/(clock-cpu_empty_cycles);
     }
     
     public double calcTurnaroundTime(){
+        int tot = 0;
+        for(Process p : processes) {
+            tot += p.time_finished - p.time_init;
+        } 
         
-        double tot = 0;
-        
-       
-        
-        return tot/processes.size();
+        return (double)tot/processes.size();
     }
     
     public double calcThroughput(){
-        return 0;
+        return (double)processes.size()/clock;
     }
     
     public double calcAvgWaitingTime(){
-        double tot = 0;
+        int tot = 0;
+        for(Process p : processes) {
+            tot += p.time_finished - p.time_init - p.getTotalExecutionTime();
+        } 
         
-        
-        return tot/processes.size();
+        return (double)tot/processes.size();
     }
     
     public double calcAvgContextSwitches(){
-        int cont = 1;
+        // context switches del diagrama de Gantt
+        int switches = os.rq.s.getTotalGanttContextSwitches();
         
-        
-        return (double)cont / processes.size();
+        return (double)switches / processes.size();
     }
-
+    
     public double calcAvgContextSwitches2(){
-        int cont = 1;
+        // context switches completos
+        int switches = os.rq.s.getTotalContextSwitches();
         
         
-        return (double)cont / processes.size();
+        return (double)switches / processes.size();
     }
-
 
     public double calcResponseTime(){
-       
+        int tot = 0;
+        for(Process p : processes) {
+            int response_time = p.time_init;
+            while (execution.get(response_time) != p.pid) {
+                response_time++;
+            }
+            tot += response_time - p.time_init;
+        } 
         
-        return 0;
+        
+        return (double)tot/processes.size();
     }
     
 }
