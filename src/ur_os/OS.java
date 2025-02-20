@@ -20,6 +20,7 @@ public class OS {
     SystemOS system;
     CPU cpu;
     public final SchedulerType SCHEDULER_TYPE = SchedulerType.FCFS;
+    public final TieBreakerType SCHEDULER_TIEBREAKER_TYPE = TieBreakerType.SMALLEST_PID;
     
     public OS(SystemOS system, CPU cpu, IOQueue ioq){
         rq = new ReadyQueue(this);
