@@ -300,7 +300,7 @@ public class SystemOS implements Runnable{
             }
         }
 
-        return (double)clock/(clock-cpu_empty_cycles);
+        return (double)(clock-cpu_empty_cycles)/(clock);
     }
     
     public double calcTurnaroundTime(){
