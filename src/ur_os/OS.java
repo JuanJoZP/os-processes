@@ -66,9 +66,10 @@ public class OS {
                 if(p != null){
                     cpu.addProcess(p);
                     System.out.println("Process "+p.getPid()+" was loaded!");
+                    rq.s.addGanttContextSwitch();
+                    rq.s.addContextSwitch();
                 }
-                rq.s.addGanttContextSwitch();
-                rq.s.addContextSwitch();
+                
             break;
             
             
