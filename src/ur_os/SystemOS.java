@@ -267,7 +267,6 @@ public class SystemOS implements Runnable{
             System.out.print(num+" ");
         }
         System.out.println("");
-        
         System.out.println("******Performance Indicators******");
         System.out.println("Total execution cycles: "+clock);
         System.out.println("CPU Utilization: "+this.calcCPUUtilization());
@@ -325,11 +324,15 @@ public class SystemOS implements Runnable{
         return (double)tot/processes.size();
     }
     
-    public double calcAvgContextSwitches(){
-        // context switches del diagrama de Gantt
-        int switches = os.rq.s.getTotalGanttContextSwitches();
+    public double calcAvgContextSwitches(){//gantt
+        int cont_switches = 1;
         
-        return (double)switches / processes.size();
+        for(int i= 1; i< execution.size();i++){
+            if(execution.get(i) != -1 && execution.get(i) !=  execution.get(i-1)){
+                cont_switches++;
+            }
+        }
+        return (double)cont_switches / processes.size();
     }
     
     public double calcAvgContextSwitches2(){

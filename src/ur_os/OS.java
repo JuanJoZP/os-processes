@@ -19,7 +19,7 @@ public class OS {
     private static int process_count = 0;
     SystemOS system;
     CPU cpu;
-    public final SchedulerType SCHEDULER_TYPE = SchedulerType.SJF_NP;
+    public final SchedulerType SCHEDULER_TYPE = SchedulerType.RR;
     public final TieBreakerType SCHEDULER_TIEBREAKER_TYPE = TieBreakerType.LARGEST_PID;
     
     public OS(SystemOS system, CPU cpu, IOQueue ioq){
@@ -66,7 +66,6 @@ public class OS {
                 if(p != null){
                     cpu.addProcess(p);
                     System.out.println("Process "+p.getPid()+" was loaded!");
-                    rq.s.addGanttContextSwitch();
                     rq.s.addContextSwitch();
                 }
                 
@@ -77,7 +76,6 @@ public class OS {
                 //When the scheduler defined which process will go to CPU
                 cpu.addProcess(p);
                 System.out.println("Process "+p.getPid()+" was loaded!");
-                rq.s.addGanttContextSwitch();
                 rq.s.addContextSwitch();
             break;
             

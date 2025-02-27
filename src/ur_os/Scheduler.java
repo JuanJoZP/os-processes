@@ -41,14 +41,6 @@ public abstract class Scheduler {
         return this.totalContextSwitches;
     }
     
-    public void addGanttContextSwitch(){
-        this.totalGanttContextSwitches++;
-    }
-    
-    public int getTotalGanttContextSwitches(){
-        return this.totalGanttContextSwitches;
-    }
-    
     public boolean isEmpty(){
         return this.processes.isEmpty();
     }
