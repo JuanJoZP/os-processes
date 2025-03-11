@@ -13,11 +13,9 @@ import java.util.List;
  */
 public class SJF_NP extends Scheduler{
 
-    
     SJF_NP(OS os){
         super(os);
-    }
-    
+    }    
    
     @Override
     public void getNext(boolean cpuEmpty) {
@@ -33,6 +31,7 @@ public class SJF_NP extends Scheduler{
                     next = tieBreaker(next, processes.get(i));
                 }
             }
+            
             if (next != null) {
                 processes.remove(next);
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
@@ -45,5 +44,4 @@ public class SJF_NP extends Scheduler{
 
     @Override
     public void IOReturningProcess(boolean cpuEmpty) {} //Non-preemtive
-    
 }
