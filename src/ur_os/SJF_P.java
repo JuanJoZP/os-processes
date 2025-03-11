@@ -17,44 +17,45 @@ public class SJF_P extends Scheduler{
         super(os);
     }
     
-    @Override
-    public void newProcess(boolean cpuEmpty){// When a NEW process enters the queue, process in CPU, if any, is extracted to compete with the rest
-    	if(cpuEmpty == false) {
-            os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);
-        }
-    } 
+    @Override// When a NEW process enters the queue, process in CPU, if any, is extracted to compete with the rest
 
+    public void newProcess(boolean cpuEmpty){
+    	if(cpuEmpty == false) {
+			
+			os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);
+		} else {
+			
+		}
+    } 
+    
+ // When a process return from IO and enters the queue, process in CPU, if any, is extracted to compete with the rest
     @Override
-    public void IOReturningProcess(boolean cpuEmpty){// When a process return from IO and enters the queue, process in CPU, if any, is extracted to compete with the rest
-        if(cpuEmpty == false) {
-            os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);					
-        }
+    public void IOReturningProcess(boolean cpuEmpty){
+		if(cpuEmpty == false) {
+			os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);					
+		} else {
+			//addContextSwitch();
+		}
     } 
    
     @Override
     public void getNext(boolean cpuEmpty) {
-        if(!processes.isEmpty() && cpuEmpty) {
-        	int cont = 0;
-        	List<Process> shortest_processes = new ArrayList<>();
+        if (!processes.isEmpty() && cpuEmpty) {
+            Process next = null;
             int shortest_process_size = Integer.MAX_VALUE;
             for (int i = 0; i < processes.size(); i++) {
                 int process_size = processes.get(i).getRemainingTimeInCurrentBurst();
-                if (process_size == shortest_process_size){
-                	shortest_processes.add(processes.get(i));
-                }
-                else if (process_size < shortest_process_size) {
-                	shortest_processes.clear();
-                	shortest_processes.add(processes.get(i)); 
-                	shortest_process_size = process_size;
+                if (process_size < shortest_process_size) {
+                    next = processes.get(i);
+                    shortest_process_size = next.getRemainingTimeInCurrentBurst();
+                } else if (process_size == shortest_process_size) {
+                    next = tieBreaker(next, processes.get(i));
                 }
             }
-            Process next = shortest_processes.getFirst() ;
-            for(int i = 0; i < shortest_processes.size()-1 ;i++) {
-            	next = tieBreaker(next,shortest_processes.get(i+1));
+            if (next != null) {
+                processes.remove(next);
+                os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
             }
-            processes.remove(next);
-            os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
-        }	
-
+        }
     }
 }
