@@ -11,31 +11,25 @@ import java.util.List;
  * @author prestamour
  */
 public class SJF_P extends Scheduler{
-
-    
+	
     SJF_P(OS os){
         super(os);
     }
-    
-    @Override// When a NEW process enters the queue, process in CPU, if any, is extracted to compete with the rest
 
+    // When a NEW process enters the queue, process in CPU, if any, is extracted to compete with the rest
+    @Override
     public void newProcess(boolean cpuEmpty){
-    	if(cpuEmpty == false) {
-			
-			os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);
-		} else {
-			
-		}
+    	if(cpuEmpty == false) {		
+		os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);
+	}
     } 
     
- // When a process return from IO and enters the queue, process in CPU, if any, is extracted to compete with the rest
+    // When a process return from IO and enters the queue, process in CPU, if any, is extracted to compete with the rest
     @Override
     public void IOReturningProcess(boolean cpuEmpty){
-		if(cpuEmpty == false) {
-			os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);					
-		} else {
-			//addContextSwitch();
-		}
+	if(cpuEmpty == false) {
+		os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ,null);					
+	}
     } 
    
     @Override
@@ -52,6 +46,7 @@ public class SJF_P extends Scheduler{
                     next = tieBreaker(next, processes.get(i));
                 }
             }
+		
             if (next != null) {
                 processes.remove(next);
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
