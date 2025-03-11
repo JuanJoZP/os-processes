@@ -21,28 +21,23 @@ public class SJF_NP extends Scheduler{
    
     @Override
     public void getNext(boolean cpuEmpty) {
-        if(!processes.isEmpty() && cpuEmpty) {
-            List<Process> shortest_processes = new ArrayList<>();
+        if (!processes.isEmpty() && cpuEmpty) {
+            Process next = null;
             int shortest_process_size = Integer.MAX_VALUE;
             for (int i = 0; i < processes.size(); i++) {
                 int process_size = processes.get(i).getRemainingTimeInCurrentBurst();
-                if (process_size == shortest_process_size){
-                    shortest_processes.add(processes.get(i));
-                }
-                else if (process_size < shortest_process_size) {
-                    shortest_processes.clear();
-                    shortest_processes.add(processes.get(i)); 
-                    shortest_process_size = process_size;
+                if (process_size < shortest_process_size) {
+                    next = processes.get(i);
+                    shortest_process_size = next.getRemainingTimeInCurrentBurst();
+                } else if (process_size == shortest_process_size) {
+                    next = tieBreaker(next, processes.get(i));
                 }
             }
-            Process next = shortest_processes.getFirst() ;
-            for(int i = 0; i < shortest_processes.size()-1 ;i++) {
-            	next = tieBreaker(next,shortest_processes.get(i+1));
+            if (next != null) {
+                processes.remove(next);
+                os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
             }
-            processes.remove(next);
-            os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, next);
-        }	
-
+        }
     }
     
     @Override
