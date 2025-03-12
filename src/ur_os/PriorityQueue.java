@@ -29,17 +29,14 @@ public class PriorityQueue extends Scheduler{
         if(s.length > 0) currentScheduler = 0;
     }
     
-    
     @Override
     public void addProcess(Process p){
-       //Overwriting the parent's addProcess(Process p) method to decide On which queue should the process go.
        int priority = p.getPriority();  
        int idx = Math.min(priority, schedulers.size() - 1); 
        schedulers.get(idx).addProcess(p);     
     }
     
     void defineCurrentScheduler(){
-        // finds the next scheduler in line to dispatch processes
         for (int i = 0; i < schedulers.size(); i++) {
             Scheduler s = schedulers.get(i);
             if (!s.isEmpty()) {
@@ -48,7 +45,6 @@ public class PriorityQueue extends Scheduler{
             }
         }   
     }
-    
    
     @Override
     public void getNext(boolean cpuEmpty) {
