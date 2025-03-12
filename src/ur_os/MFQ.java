@@ -14,11 +14,8 @@ import java.util.Arrays;
 public class MFQ extends Scheduler{
 
     int currentScheduler;
-    
     private ArrayList<Scheduler> schedulers;
-    //This may be a suggestion... you may use the current sschedulers to create the Multilevel Feedback Queue, or you may go with a more tradicional way
-    //based on implementing all the queues in this class... it is your choice. Change all you need in this class.
-    
+
     MFQ(OS os){
         super(os);
         currentScheduler = -1;
@@ -28,26 +25,71 @@ public class MFQ extends Scheduler{
     MFQ(OS os, Scheduler... s){ //Received multiple arrays
         this(os);
         schedulers.addAll(Arrays.asList(s));
-        if(s.length > 0)
-            currentScheduler = 0;
+        if(s.length > 0) currentScheduler = 0;
     }
         
     @Override
     public void addProcess(Process p){
-       //Overwriting the parent's addProcess(Process p) method may be necessary in order to decide what to do with process coming from the CPU.
-        
+       // incoming process goes into first queue allways 
+       schedulers.get(0).addProcess(p);
     }
     
     void defineCurrentScheduler(){
-        //This methos is siggested to help you find the scheduler that should be the next in line to provide processes... perhaps the one with process in the queue?
+        // set currentScheduler to the first non empty scheduler
+        for (int i = 0; i < schedulers.size(); i++) {
+            if (!schedulers.get(i).isEmpty()) {
+                currentScheduler = i;
+                return;
+            }
+        }
+    }
+    
+    boolean nonEmptySchedulerBefore(int stop) {
+        for (int i = 0; i < stop; i++) {
+            if(!schedulers.get(i).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
     
    
     @Override
     public void getNext(boolean cpuEmpty) {
-        //Suggestion: now that you know on which scheduler a process is, you need to keep advancing that scheduler. If it a preemptive one, you need to notice the changes
-        //that it may have caused and verify if the change is coherent with the priority policy for the queues.
-  
+        if (!cpuEmpty) {
+            Process prev_process = os.cpu.getProcess();
+            schedulers.get(currentScheduler).getNext(false); // if preemptive this changes the process in cpu 
+            Process next_process = os.cpu.getProcess();
+
+            // if a process is preempted, send it to the next queue
+            if (prev_process != next_process) {
+                // si son de la misma cola
+                Process preempted_p = schedulers.get(0).processes.removeLast(); // preempted p got appended into first queue
+                schedulers.get(currentScheduler+1).addProcess(preempted_p);
+                
+                // aca un if next_process es null, significa que saca el proceso por quantum
+                // pero no tenia que mas meter asi que saco y dejó null
+                if (next_process == null) {
+                    getNext(true); // mete el que este en cola de mas prioridad
+                } else if (nonEmptySchedulerBefore(currentScheduler)) {
+                    // puso un proceso distinto, pero puede que de la misma cola,
+                    // eso podria ser un error, porque una cola de mayor prioridad puede que tuviera procesos
+                    // esperando
+                    os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null); // this adds the process to the last position of the first queue
+                    Process wrong_p = schedulers.get(0).processes.removeLast();  // the p that was incorrectly put on CPU
+                    schedulers.get(currentScheduler).processes.add(0, wrong_p);
+                    getNext(true);
+                    // if alguna cola hasta currentScheduler tenia algo
+                // sacar de cpu el proceso que metio, devolverlo al primer puesto de la
+                // cola en la que estaba
+                // llamar getNext(true)
+                }
+            }
+        } else {
+            defineCurrentScheduler();
+            schedulers.get(currentScheduler).getNext(true);
+        }
+        
     }
     
     @Override
