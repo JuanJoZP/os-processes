@@ -36,12 +36,7 @@ public class CFS extends Scheduler {
 
     @Override
     public void getNext(boolean cpuEmpty) {
-        // MAXVRUNTIME SOLO SE DEBE CALCULAR AL INICIO DE CADA QUANTUM
-        // CUANDO TODOS LOS VRUNTIMES LLEGUEN A MAX ENTONCES SE REINICIAN A 0
-        // Y AHI SI SE RECALCULA EL MAXVRUNTIME
-        // CREO QUE EN NEWPROCESS E IORETURNING DEBERIA RECALCULAR MAXVRUNTIME
-        
-        // PERO PONIENDO CUIDADO DE QUE SI EL RECALCULO HACE QUE SE PASEN TODOS REINICIARLOS
+        // if all process get to maxvruntime then all vruntimes resets to zero
         if(processQueue.size > 0){ 
             if(processQueue.GetAllRuntime(getMaxVruntime())){
                 processQueue.restartVruntime();
