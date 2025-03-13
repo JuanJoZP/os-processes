@@ -124,7 +124,7 @@ public abstract class Scheduler {
             IOReturningProcess(os.isCPUEmpty()); //If the process is returning from IO, let the scheduler defines what it will do to update the queue to select the next
         }
         
-        p.setState(ProcessState.READY); //If the process comes from the CPU, just add it to the list
+        p.setState(ProcessState.READY);
         processes.add(p);
     }
     
