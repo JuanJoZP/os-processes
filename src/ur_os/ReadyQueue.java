@@ -47,7 +47,7 @@ public class ReadyQueue {
                 break;
                 
             case FAIR   :
-                
+                s = new CFS(os,4);
                 break;
         }
         

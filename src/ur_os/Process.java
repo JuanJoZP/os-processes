@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ur_os;
 
 import java.util.Random;
@@ -23,7 +18,8 @@ public class Process implements Comparable{
     int currentScheduler;
     int priority;
     Random r;
-
+    public double vruntime;
+    
 
     public Process() {
         r = new Random();
@@ -36,6 +32,7 @@ public class Process implements Comparable{
         state = ProcessState.NEW;
         currentScheduler = 0;
         priority = 0;
+        vruntime = 0;
     }
     
     public Process(boolean auto) {
@@ -43,6 +40,7 @@ public class Process implements Comparable{
         time_init = 0;
         time_finished = -1;
         pbl = new ProcessBurstList();
+        vruntime = 0;
         if(auto){
             pbl.generateRandomBursts(NUM_CPU_CYCLES, MAX_CPU_CYCLES, MAX_IO_CYCLES);
             //pbl.generateSimpleBursts(); //Generates process with 3 bursts (CPU, IO, CPU) with 5 cycles each
@@ -55,12 +53,14 @@ public class Process implements Comparable{
         this();
         this.pid = pid;
         this.time_init = time_init;
+        vruntime = 0;
     }
     
     public Process(Process p) {
         this.pid = p.pid;
         this.time_init = p.time_init;
         this.pbl = new ProcessBurstList(p.getPBL());
+        vruntime = 0;
     }
 
     public boolean advanceBurst(){
@@ -173,6 +173,17 @@ public class Process implements Comparable{
         return false;
         
     }
+    public double getVruntime(){
+        return this.vruntime;
+    }
+    public void setVruntime(double v){
+        this.vruntime = v;
+    }
+    
+    public boolean compareVruntime(Process any){
+        return this.vruntime < any.getVruntime();
+    }
+    
     
     
 }
